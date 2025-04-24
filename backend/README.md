@@ -173,3 +173,103 @@ Send a JSON object with the following structure:
 
 - The `token` is a JWT for authentication in future requests.
 - Passwords are securely hashed and compared during login.
+
+---
+
+## Endpoint
+
+### `POST /users/profile`
+
+Retrieves the profile of the authenticated user.
+
+---
+
+## Request Headers
+
+| Field           | Type   | Required | Description                          |
+|----------------|--------|----------|--------------------------------------|
+| `Authorization` | String | Yes      | Bearer token received after login     |
+
+---
+
+## Responses
+
+### 200 OK
+
+- **Description:** User profile retrieved successfully.
+- **Body:**
+    ```json
+    {
+      "_id": "user_id_here",
+      "fullname": {
+        "firstname": "John",
+        "lastname": "Doe"
+      },
+      "email": "john.doe@example.com"
+    }
+    ```
+
+### 401 Unauthorized
+
+- **Description:** No token provided or invalid token.
+- **Body:**
+    ```json
+    {
+      "message": "Access denied. No token provided."
+    }
+    ```
+
+---
+
+## Notes
+
+- Requires authentication via JWT token in the Authorization header.
+- Token must be prefixed with "Bearer ".
+
+---
+
+## Endpoint
+
+### `POST /users/logout`
+
+Logs out the currently authenticated user.
+
+---
+
+## Request Headers
+
+| Field           | Type   | Required | Description                          |
+|----------------|--------|----------|--------------------------------------|
+| `Authorization` | String | Yes      | Bearer token received after login     |
+
+---
+
+## Responses
+
+### 200 OK
+
+- **Description:** User logged out successfully.
+- **Body:**
+    ```json
+    {
+      "message": "Logout successfully"
+    }
+    ```
+
+### 401 Unauthorized
+
+- **Description:** No token provided or invalid token.
+- **Body:**
+    ```json
+    {
+      "message": "Access denied. No token provided."
+    }
+    ```
+
+---
+
+## Notes
+
+- Requires authentication via JWT token in the Authorization header.
+- The token will be blacklisted after logout.
+- Clears the authentication cookie if present.
