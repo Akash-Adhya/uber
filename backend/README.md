@@ -84,3 +84,92 @@ Send a JSON object with the following structure:
 
 - The `token` is a JWT for authentication in future requests.
 - Passwords are securely hashed before storage.
+
+
+---
+
+## Endpoint
+
+
+### `POST /users/login`
+
+Authenticates a user and returns a token.
+
+---
+
+## Request Body
+
+Send a JSON object with the following structure:
+
+| Field      | Type   | Required | Description                                   |
+|------------|--------|----------|-----------------------------------------------|
+| `email`    | String | Yes      | User's email address (must be valid)          |
+| `password` | String | Yes      | User's password (min 6 characters)            |
+
+**Example:**
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "securepassword"
+}
+```
+
+---
+
+## Responses
+
+### 200 OK
+
+- **Description:** User authenticated successfully.
+- **Body:**
+    ```json
+    {
+      "token": "jwt_token_here",
+      "user": {
+        "_id": "user_id_here",
+        "fullname": {
+          "firstname": "John",
+          "lastname": "Doe"
+        },
+        "email": "john.doe@example.com"
+      }
+    }
+    ```
+
+### 400 Bad Request
+
+- **Description:** Validation failed or missing required fields.
+- **Body:**
+    ```json
+    {
+      "errors": [
+        {
+          "msg": "Invalid email or password."
+        }
+      ]
+    }
+    ```
+
+### 401 Unauthorized
+
+- **Description:** Invalid email or password.
+- **Body:**
+    ```json
+    {
+      "message": "Invalid email or password"
+    }
+    ```
+
+---
+
+## Validation Rules
+
+- `email`: Required, must be a valid email.
+- `password`: Required, at least 6 characters.
+
+---
+
+## Notes
+
+- The `token` is a JWT for authentication in future requests.
+- Passwords are securely hashed and compared during login.
