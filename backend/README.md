@@ -1,26 +1,47 @@
-# User Registration API Documentation
-
-## Endpoint
-
-### `POST /users/register`
-
-Registers a new user in the system.
+# UBER Backend API Documentation
 
 ---
 
-## Request Body
+## 📚 Table of Contents
 
-Send a JSON object with the following structure:
+- [User Endpoints](#user-endpoints)
+  - [Register User](#register-user)
+  - [Login User](#login-user)
+  - [User Profile](#user-profile)
+  - [Logout User](#logout-user)
+- [Captain Endpoints](#captain-endpoints)
+  - [Register Captain](#register-captain)
+  - [Login Captain](#login-captain)
+  - [Captain Profile](#captain-profile)
+  - [Logout Captain](#logout-captain)
+- [Validation Rules](#validation-rules)
+- [Notes](#notes)
 
-| Field                  | Type   | Required | Description                                   |
-|------------------------|--------|----------|-----------------------------------------------|
-| `fullname.firstname`   | String | Yes      | User's first name (min 3 characters)          |
-| `fullname.lastname`    | String | No       | User's last name (min 3 characters, optional) |
-| `email`                | String | Yes      | User's email address (must be valid)          |
-| `password`             | String | Yes      | User's password (min 6 characters)            |
+---
 
-**Example:**
+## 👤 User Endpoints
+
+### Register User
+
+**Endpoint:**  
+`POST /users/register`
+
+Registers a new user in the system.
+
+#### Request Body
+
+| Field                | Type   | Required | Description                                   |
+|----------------------|--------|----------|-----------------------------------------------|
+| `fullname.firstname` | String | Yes      | User's first name (min 3 characters)          |
+| `fullname.lastname`  | String | No       | User's last name (min 3 characters, optional) |
+| `email`              | String | Yes      | User's email address (must be valid)          |
+| `password`           | String | Yes      | User's password (min 6 characters)            |
+
+**Example Request:**
 ```json
+POST /users/register
+Content-Type: application/json
+
 {
   "fullname": {
     "firstname": "John",
@@ -31,73 +52,181 @@ Send a JSON object with the following structure:
 }
 ```
 
----
+**Example Success Response:**
+```json
+HTTP/1.1 201 Created
+{
+  "token": "<jwt_token>",
+  "user": {
+    "_id": "user_id",
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john.doe@example.com"
+    // ...other fields
+  }
+}
+```
 
-## Responses
-
-### 201 Created
-
-- **Description:** User registered successfully.
-- **Body:**
-    ```json
+**Example Error Response:**
+```json
+HTTP/1.1 400 Bad Request
+{
+  "errors": [
     {
-      "token": "jwt_token_here",
-      "user": {
-        "_id": "user_id_here",
-        "fullname": {
-          "firstname": "John",
-          "lastname": "Doe"
-        },
-        "email": "john.doe@example.com"
-      }
+      "msg": "First name must be 3 characters long.",
+      "param": "fullname.firstname",
+      "location": "body"
     }
-    ```
-
-### 400 Bad Request
-
-- **Description:** Validation failed or missing required fields.
-- **Body:**
-    ```json
-    {
-      "errors": [
-        {
-          "msg": "First name must be 3 characters long.",
-          "param": "fullname.firstname",
-          "location": "body"
-        }
-      ]
-    }
-    ```
+  ]
+}
+```
 
 ---
 
-## Validation Rules
+### Login User
 
-- `fullname.firstname`: Required, at least 3 characters.
-- `fullname.lastname`: Optional, at least 3 characters if provided.
-- `email`: Required, must be a valid email.
-- `password`: Required, at least 6 characters.
+**Endpoint:**  
+`POST /users/login`
+
+Authenticates a user and returns a token.
+
+#### Request Body
+
+| Field      | Type   | Required | Description                          |
+|------------|--------|----------|--------------------------------------|
+| `email`    | String | Yes      | User's email address (must be valid) |
+| `password` | String | Yes      | User's password (min 6 characters)   |
+
+**Example Request:**
+```json
+POST /users/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "securepassword"
+}
+```
+
+**Example Success Response:**
+```json
+HTTP/1.1 200 OK
+{
+  "token": "<jwt_token>",
+  "user": {
+    "_id": "user_id",
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john.doe@example.com"
+    // ...other fields
+  }
+}
+```
+
+**Example Error Response:**
+```json
+HTTP/1.1 401 Unauthorized
+{
+  "message": "Invalid email or password"
+}
+```
 
 ---
 
-## Notes
+### User Profile
 
-- The `token` is a JWT for authentication in future requests.
-- Passwords are securely hashed before storage.
+**Endpoint:**  
+`POST /users/profile`
+
+Retrieves the profile of the authenticated user.
+
+#### Request Headers
+
+| Field           | Type   | Required | Description                       |
+|-----------------|--------|----------|-----------------------------------|
+| `Authorization` | String | Yes      | Bearer token received after login |
+
+**Example Request:**
+```http
+POST /users/profile
+Authorization: Bearer <jwt_token>
+```
+
+**Example Success Response:**
+```json
+HTTP/1.1 200 OK
+{
+  "_id": "user_id",
+  "fullname": {
+    "firstname": "John",
+    "lastname": "Doe"
+  },
+  "email": "john.doe@example.com"
+  // ...other fields
+}
+```
+
+**Example Error Response:**
+```json
+HTTP/1.1 401 Unauthorized
+{
+  "message": "Unauthorized access !!"
+}
+```
 
 ---
 
-## Endpoint
+### Logout User
 
-### `POST /captains/register`
+**Endpoint:**  
+`POST /users/logout`
+
+Logs out the currently authenticated user.
+
+#### Request Headers
+
+| Field           | Type   | Required | Description                       |
+|-----------------|--------|----------|-----------------------------------|
+| `Authorization` | String | Yes      | Bearer token received after login |
+
+**Example Request:**
+```http
+POST /users/logout
+Authorization: Bearer <jwt_token>
+```
+
+**Example Success Response:**
+```json
+HTTP/1.1 200 OK
+{
+  "message": "Logout successfully"
+}
+```
+
+**Example Error Response:**
+```json
+HTTP/1.1 401 Unauthorized
+{
+  "message": "Unauthorized access !!"
+}
+```
+
+---
+
+## Captain Endpoints
+
+### Register Captain
+
+**Endpoint:**  
+`POST /captains/register`
 
 Registers a new captain in the system.
 
----
-
-## Request Body
-
-Send a JSON object with the following structure:
+#### Request Body
 
 | Field                    | Type   | Required | Description                                         |
 |--------------------------|--------|----------|-----------------------------------------------------|
@@ -110,8 +239,11 @@ Send a JSON object with the following structure:
 | `vehicle.capacity`       | Number | Yes      | Vehicle capacity (must be a number)                 |
 | `vehicle.vehicleType`    | String | Yes      | Vehicle type: 'car', 'bike', or 'shuttle'           |
 
-**Example:**
+**Example Request:**
 ```json
+POST /captains/register
+Content-Type: application/json
+
 {
   "fullname": {
     "firstname": "Alice",
@@ -128,262 +260,206 @@ Send a JSON object with the following structure:
 }
 ```
 
----
-
-## Responses
-
-### 201 Created
-
-- **Description:** Captain registered successfully.
-- **Body:**
-    ```json
-    {
-      "token": "jwt_token_here",
-      "captain": {
-        "_id": "captain_id_here",
-        "fullname": {
-          "firstname": "Alice",
-          "lastname": "Smith"
-        },
-        "email": "alice.smith@example.com",
-        "vehicle": {
-          "color": "Red",
-          "plate": "XYZ123",
-          "capacity": 4,
-          "vehicleType": "car"
-        }
-      }
-    }
-    ```
-
-### 400 Bad Request
-
-- **Description:** Validation failed, missing required fields, or captain already exists.
-- **Body (validation error):**
-    ```json
-    {
-      "errors": [
-        {
-          "msg": "First name must be 3 characters long.",
-          "param": "fullname.firstname",
-          "location": "body"
-        }
-      ]
-    }
-    ```
-- **Body (duplicate email):**
-    ```json
-    {
-      "message": "Captain already exists for this email!!"
-    }
-    ```
-
----
-
-## Validation Rules
-
-- `fullname.firstname`: Required, at least 3 characters.
-- `fullname.lastname`: Optional.
-- `email`: Required, must be a valid email.
-- `password`: Required, at least 6 characters.
-- `vehicle.color`: Required, at least 3 characters.
-- `vehicle.plate`: Required, at least 3 characters.
-- `vehicle.capacity`: Required, must be a number.
-- `vehicle.vehicleType`: Required, must be one of 'car', 'bike', or 'shuttle'.
-
----
-
-## Notes
-
-- The `token` is a JWT for authentication in future requests.
-- Passwords are securely hashed before storage.
-- All vehicle information is required except for `lastname`.
-- Requires all fields to be present and valid for successful registration.
-
----
-
-## Endpoint
-
-
-### `POST /users/login`
-
-Authenticates a user and returns a token.
-
----
-
-## Request Body
-
-Send a JSON object with the following structure:
-
-| Field      | Type   | Required | Description                                   |
-|------------|--------|----------|-----------------------------------------------|
-| `email`    | String | Yes      | User's email address (must be valid)          |
-| `password` | String | Yes      | User's password (min 6 characters)            |
-
-**Example:**
+**Example Success Response:**
 ```json
+HTTP/1.1 201 Created
 {
-  "email": "john.doe@example.com",
-  "password": "securepassword"
+  "token": "<jwt_token>",
+  "captain": {
+    "_id": "captain_id",
+    "fullname": {
+      "firstname": "Alice",
+      "lastname": "Smith"
+    },
+    "email": "alice.smith@example.com",
+    "vehicle": {
+      "color": "Red",
+      "plate": "WB 15 A 1234",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+    // ...other fields
+  }
+}
+```
+
+**Example Error Response:**
+```json
+HTTP/1.1 400 Bad Request
+{
+  "message": "Captain already exists for this email!!"
 }
 ```
 
 ---
 
-## Responses
+### Login Captain
 
-### 200 OK
+**Endpoint:**  
+`POST /captains/login`
 
-- **Description:** User authenticated successfully.
-- **Body:**
-    ```json
-    {
-      "token": "jwt_token_here",
-      "user": {
-        "_id": "user_id_here",
-        "fullname": {
-          "firstname": "John",
-          "lastname": "Doe"
-        },
-        "email": "john.doe@example.com"
-      }
-    }
-    ```
+Authenticates a captain and returns a token.
 
-### 400 Bad Request
+#### Request Body
 
-- **Description:** Validation failed or missing required fields.
-- **Body:**
-    ```json
-    {
-      "errors": [
-        {
-          "msg": "Invalid email or password."
-        }
-      ]
-    }
-    ```
+| Field      | Type   | Required | Description                              |
+|------------|--------|----------|------------------------------------------|
+| `email`    | String | Yes      | Captain's email address (must be valid)  |
+| `password` | String | Yes      | Captain's password (min 6 characters)    |
 
-### 401 Unauthorized
+**Example Request:**
+```json
+POST /captains/login
+Content-Type: application/json
 
-- **Description:** Invalid email or password.
-- **Body:**
-    ```json
-    {
-      "message": "Invalid email or password"
-    }
-    ```
+{
+  "email": "alice.smith@example.com",
+  "password": "securepassword"
+}
+```
+
+**Example Success Response:**
+```json
+HTTP/1.1 200 OK
+{
+  "token": "<jwt_token>",
+  "captain": {
+    "_id": "captain_id",
+    "fullname": {
+      "firstname": "Alice",
+      "lastname": "Smith"
+    },
+    "email": "alice.smith@example.com"
+    // ...other fields
+  }
+}
+```
+
+**Example Error Response:**
+```json
+HTTP/1.1 401 Unauthorized
+{
+  "message": "Invalid email or password"
+}
+```
+
+---
+
+### Captain Profile
+
+**Endpoint:**  
+`POST /captains/profile`
+
+Retrieves the profile of the authenticated captain.
+
+#### Request Headers
+
+| Field           | Type   | Required | Description                       |
+|-----------------|--------|----------|-----------------------------------|
+| `Authorization` | String | Yes      | Bearer token received after login |
+
+**Example Request:**
+```http
+POST /captains/profile
+Authorization: Bearer <jwt_token>
+```
+
+**Example Success Response:**
+```json
+HTTP/1.1 200 OK
+{
+  "_id": "captain_id",
+  "fullname": {
+    "firstname": "Alice",
+    "lastname": "Smith"
+  },
+  "email": "alice.smith@example.com",
+  "vehicle": {
+    "color": "Red",
+    "plate": "WB 15 A 1234",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+  // ...other fields
+}
+```
+
+**Example Error Response:**
+```json
+HTTP/1.1 401 Unauthorized
+{
+  "message": "Unauthorized access !"
+}
+```
+
+---
+
+### Logout Captain
+
+**Endpoint:**  
+`POST /captains/logout`
+
+Logs out the currently authenticated captain.
+
+#### Request Headers
+
+| Field           | Type   | Required | Description                       |
+|-----------------|--------|----------|-----------------------------------|
+| `Authorization` | String | Yes      | Bearer token received after login |
+
+**Example Request:**
+```http
+POST /captains/logout
+Authorization: Bearer <jwt_token>
+```
+
+**Example Success Response:**
+```json
+HTTP/1.1 200 OK
+{
+  "message": "Logout successfully"
+}
+```
+
+**Example Error Response:**
+```json
+HTTP/1.1 401 Unauthorized
+{
+  "message": "Unauthorized access !"
+}
+```
 
 ---
 
 ## Validation Rules
 
-- `email`: Required, must be a valid email.
-- `password`: Required, at least 6 characters.
+### User
+
+- `fullname.firstname`: **Required**, at least 3 characters.
+- `fullname.lastname`: Optional, at least 3 characters if provided.
+- `email`: **Required**, must be a valid email.
+- `password`: **Required**, at least 6 characters.
+
+### Captain
+
+- `fullname.firstname`: **Required**, at least 3 characters.
+- `fullname.lastname`: Optional.
+- `email`: **Required**, must be a valid email.
+- `password`: **Required**, at least 6 characters.
+- `vehicle.color`: **Required**, at least 3 characters.
+- `vehicle.plate`: **Required**, at least 3 characters.
+- `vehicle.capacity`: **Required**, must be a number.
+- `vehicle.vehicleType`: **Required**, must be one of `'car'`, `'bike'`, or `'shuttle'`.
 
 ---
 
 ## Notes
 
-- The `token` is a JWT for authentication in future requests.
-- Passwords are securely hashed and compared during login.
-
----
-
-## Endpoint
-
-### `POST /users/profile`
-
-Retrieves the profile of the authenticated user.
-
----
-
-## Request Headers
-
-| Field           | Type   | Required | Description                          |
-|----------------|--------|----------|--------------------------------------|
-| `Authorization` | String | Yes      | Bearer token received after login     |
-
----
-
-## Responses
-
-### 200 OK
-
-- **Description:** User profile retrieved successfully.
-- **Body:**
-    ```json
-    {
-      "_id": "user_id_here",
-      "fullname": {
-        "firstname": "John",
-        "lastname": "Doe"
-      },
-      "email": "john.doe@example.com"
-    }
-    ```
-
-### 401 Unauthorized
-
-- **Description:** No token provided or invalid token.
-- **Body:**
-    ```json
-    {
-      "message": "Access denied. No token provided."
-    }
-    ```
-
----
-
-## Notes
-
-- Requires authentication via JWT token in the Authorization header.
-- Token must be prefixed with "Bearer ".
-
----
-
-## Endpoint
-
-### `POST /users/logout`
-
-Logs out the currently authenticated user.
-
----
-
-## Request Headers
-
-| Field           | Type   | Required | Description                          |
-|----------------|--------|----------|--------------------------------------|
-| `Authorization` | String | Yes      | Bearer token received after login     |
-
----
-
-## Responses
-
-### 200 OK
-
-- **Description:** User logged out successfully.
-- **Body:**
-    ```json
-    {
-      "message": "Logout successfully"
-    }
-    ```
-
-### 401 Unauthorized
-
-- **Description:** No token provided or invalid token.
-- **Body:**
-    ```json
-    {
-      "message": "Access denied. No token provided."
-    }
-    ```
-
----
-
-## Notes
-
-- Requires authentication via JWT token in the Authorization header.
+- All endpoints return **JSON** responses.
+- The `token` is a **JWT** for authentication in future requests.
+- Passwords are securely hashed before storage and compared during login.
+- All protected endpoints require the `Authorization` header with a Bearer token.
 - The token will be blacklisted after logout.
 - Clears the authentication cookie if present.
+
+---
