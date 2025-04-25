@@ -85,6 +85,120 @@ Send a JSON object with the following structure:
 - The `token` is a JWT for authentication in future requests.
 - Passwords are securely hashed before storage.
 
+---
+
+## Endpoint
+
+### `POST /captains/register`
+
+Registers a new captain in the system.
+
+---
+
+## Request Body
+
+Send a JSON object with the following structure:
+
+| Field                    | Type   | Required | Description                                         |
+|--------------------------|--------|----------|-----------------------------------------------------|
+| `fullname.firstname`     | String | Yes      | Captain's first name (min 3 characters)             |
+| `fullname.lastname`      | String | No       | Captain's last name (optional)                      |
+| `email`                  | String | Yes      | Captain's email address (must be valid)             |
+| `password`               | String | Yes      | Captain's password (min 6 characters)               |
+| `vehicle.color`          | String | Yes      | Vehicle color (min 3 characters)                    |
+| `vehicle.plate`          | String | Yes      | Vehicle plate (min 3 characters)                    |
+| `vehicle.capacity`       | Number | Yes      | Vehicle capacity (must be a number)                 |
+| `vehicle.vehicleType`    | String | Yes      | Vehicle type: 'car', 'bike', or 'shuttle'           |
+
+**Example:**
+```json
+{
+  "fullname": {
+    "firstname": "Alice",
+    "lastname": "Smith"
+  },
+  "email": "alice.smith@example.com",
+  "password": "securepassword",
+  "vehicle": {
+    "color": "Red",
+    "plate": "WB 15 A 1234",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+---
+
+## Responses
+
+### 201 Created
+
+- **Description:** Captain registered successfully.
+- **Body:**
+    ```json
+    {
+      "token": "jwt_token_here",
+      "captain": {
+        "_id": "captain_id_here",
+        "fullname": {
+          "firstname": "Alice",
+          "lastname": "Smith"
+        },
+        "email": "alice.smith@example.com",
+        "vehicle": {
+          "color": "Red",
+          "plate": "XYZ123",
+          "capacity": 4,
+          "vehicleType": "car"
+        }
+      }
+    }
+    ```
+
+### 400 Bad Request
+
+- **Description:** Validation failed, missing required fields, or captain already exists.
+- **Body (validation error):**
+    ```json
+    {
+      "errors": [
+        {
+          "msg": "First name must be 3 characters long.",
+          "param": "fullname.firstname",
+          "location": "body"
+        }
+      ]
+    }
+    ```
+- **Body (duplicate email):**
+    ```json
+    {
+      "message": "Captain already exists for this email!!"
+    }
+    ```
+
+---
+
+## Validation Rules
+
+- `fullname.firstname`: Required, at least 3 characters.
+- `fullname.lastname`: Optional.
+- `email`: Required, must be a valid email.
+- `password`: Required, at least 6 characters.
+- `vehicle.color`: Required, at least 3 characters.
+- `vehicle.plate`: Required, at least 3 characters.
+- `vehicle.capacity`: Required, must be a number.
+- `vehicle.vehicleType`: Required, must be one of 'car', 'bike', or 'shuttle'.
+
+---
+
+## Notes
+
+- The `token` is a JWT for authentication in future requests.
+- Passwords are securely hashed before storage.
+- All vehicle information is required except for `lastname`.
+- Requires all fields to be present and valid for successful registration.
 
 ---
 
