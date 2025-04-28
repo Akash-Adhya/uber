@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+// import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 
@@ -6,7 +7,7 @@ const UserLogin = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [userData, setUserData] = useState({});
+    // const [userData, setUserData] = useState({});
 
     const submitHandler = (e) => {
         e.preventDefault();

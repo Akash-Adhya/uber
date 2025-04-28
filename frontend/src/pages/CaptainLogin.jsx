@@ -31,7 +31,7 @@ const CaptainLogin = () => {
     return (
         <div className="p-7 h-screen flex flex-col justify-between">
             <div>
-                <img className="w-1/4 mb-3" src="https://www.svgrepo.com/show/505031/uber-driver.svg" alt="uber-captain-logo" />
+                <img className="w-20 mb-3" src="https://www.svgrepo.com/show/505031/uber-driver.svg" alt="uber-captain-logo" />
                 <form onSubmit={submitHandler}>
                     <h3 className="text-lg font-medium mb-3">Enter your email</h3>
                     <input
