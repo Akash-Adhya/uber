@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const UserProtectWrapper = ({ children }) => {
 
     const navigate = useNavigate();
-    
+
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -14,7 +14,7 @@ const UserProtectWrapper = ({ children }) => {
         console.log(token)
     }, [navigate]);
 
-    
+
     return children;
 };
 
