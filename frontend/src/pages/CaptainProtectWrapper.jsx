@@ -1,20 +1,18 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const UserProtectWrapper = ({ children }) => {
-
+const CaptainProtectWrapper = ({ children }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
-            navigate('/users/login');
+            navigate('/captains/login');
         }
-        
     }, [navigate]);
 
 
     return children;
-};
+}
 
-export default UserProtectWrapper;
+export default CaptainProtectWrapper;

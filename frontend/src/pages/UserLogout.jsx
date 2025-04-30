@@ -36,11 +36,13 @@ const UserLogout = () => {
         const logoutUser = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/users/logout`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                
+                const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/logout`, {}, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        }
+                    }
+                );
 
                 if (response.status === 200) {
                     localStorage.removeItem('token');
@@ -48,7 +50,8 @@ const UserLogout = () => {
                 }
             } catch (error) {
                 console.error('Logout failed:', error);
-                localStorage.removeItem('token'); // even if failed, clear token
+                // Clear token and redirect even if logout fails
+                localStorage.removeItem('token');
                 navigate('/users/login');
             }
         };
@@ -56,9 +59,7 @@ const UserLogout = () => {
         logoutUser();
     }, [navigate]);
 
-    return (
-        <div>UserLogout</div>
-    );
+    return <div>Logging out...</div>;
 };
 
 export default UserLogout;

@@ -63,12 +63,40 @@ module.exports.getUserProfile = async (req, res, next) => {
 }
 
 
+
 module.exports.logoutUser = async (req, res, next) => {
-    res.clearCookie('token');
-
-    const token = req.cookies.token || req.headers.authrization.split(' ')[1];
-
-    await BlacklistToken.create({token});
     
-    res.status(200).json({message: "Logout successfully"});
-}
+    try {
+        const token = req.headers.authorization?.split(' ')[1] || req.cookies.token;
+        
+        if (!token) {
+            return res.status(401).json({ message: 'No token provided' });
+        }
+
+        // Check if token is already blacklisted
+        const existingEntry = await BlacklistToken.findOne({ token });
+        if (existingEntry) {
+            res.clearCookie('token');
+            return res.status(200).json({ message: 'Already logged out' });
+        }
+
+        // Add token to blacklist
+        await BlacklistToken.create({ token });
+        
+        res.clearCookie('token');
+        return res.status(200).json({ message: "Logout successful" });
+    } catch (error) {
+        console.error('Logout error:', error);
+        
+        // Handle duplicate key error specifically
+        if (error.code === 11000) {
+            res.clearCookie('token');
+            return res.status(200).json({ message: 'Logout successful (token already blacklisted)' });
+        }
+        
+        return res.status(500).json({ 
+            message: "Logout failed",
+            error: error.message
+        });
+    }
+};

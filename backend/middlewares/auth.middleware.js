@@ -24,6 +24,9 @@ module.exports.authUser = async (req, res, next) => {
         return res.status(401).json({ message: 'User is logged out!' });
     }
 
+    // After verifying the token
+    req.token = token;
+
     try {
         // Verify JWT token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -60,6 +63,9 @@ module.exports.authCaptain = async (req, res, next) => {
     if (blacklistToken) {
         return res.status(401).json({ message: 'Unauthorized access !' });
     }
+
+    // After verifying the token
+    req.token = token;
 
     try {
         // Verify JWT token
