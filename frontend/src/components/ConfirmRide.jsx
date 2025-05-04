@@ -27,7 +27,7 @@ const ConfirmRide = (props) => {
                     src='https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_368,w_552/v1548646935/assets/64/93c255-87c8-4e2e-9429-cf709bf1b838/original/3.png'
                     alt="Vehicle illustration"
                 />
-
+                
                 <div className='w-full flex flex-col items-center'>
                     <div className='w-full flex items-center gap-5 p-3 border-b-2'>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
