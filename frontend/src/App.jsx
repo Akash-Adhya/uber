@@ -11,29 +11,37 @@ import UserLogout from "./pages/UserLogout";
 import CaptainHome from "./pages/CaptainHome";
 import CaptainProtectWrapper from "./pages/CaptainProtectWrapper";
 import CaptainLogout from "./pages/CaptainLogout";
+import { Toaster } from 'react-hot-toast';
 
 
 const App = () => {
     return (
-        <Routes>
-            <Route path="/" element={<Start />} />
-            <Route path="/users/signup" element={<UserSignup />} />
-            <Route path="/users/login" element={<UserLogin />} />
-            <Route path="/captains/signup" element={<CaptainSignup />} />
-            <Route path="/captains/login" element={<CaptainLogin />} />
-            <Route path="/home" element={
-                <UserProtectWrapper>
-                    <Home />
-                </UserProtectWrapper>}
+        <div>
+            <Routes>
+                <Route path="/" element={<Start />} />
+                <Route path="/users/signup" element={<UserSignup />} />
+                <Route path="/users/login" element={<UserLogin />} />
+                <Route path="/captains/signup" element={<CaptainSignup />} />
+                <Route path="/captains/login" element={<CaptainLogin />} />
+                <Route path="/home" element={
+                    <UserProtectWrapper>
+                        <Home />
+                    </UserProtectWrapper>}
+                />
+                <Route path="/captain/home" element={
+                    <CaptainProtectWrapper>
+                        <CaptainHome />
+                    </CaptainProtectWrapper>}
+                />
+                <Route path="/users/logout" element={<UserLogout />}></Route>
+                <Route path="/captains/logout" element={<CaptainLogout />} ></Route>
+            </Routes>
+            <Toaster
+                position="top-center"
+                reverseOrder={false}
             />
-            <Route path="/captain/home" element={
-                <CaptainProtectWrapper>
-                    <CaptainHome />
-                </CaptainProtectWrapper>}
-            />
-            <Route path="/users/logout" element={<UserLogout />}></Route>
-            <Route path="/captains/logout" element={<CaptainLogout />} ></Route>
-        </Routes>
+        </div>
+
     );
 }
 
