@@ -13,6 +13,7 @@ import CaptainProtectWrapper from "./pages/CaptainProtectWrapper";
 import CaptainLogout from "./pages/CaptainLogout";
 import { Toaster } from 'react-hot-toast';
 import Riding from "./pages/Riding";
+import CaptainRiding from "./pages/CaptainRiding";
 
 
 const App = () => {
@@ -35,6 +36,7 @@ const App = () => {
                         <CaptainHome />
                     </CaptainProtectWrapper>}
                 />
+                <Route path="/captain/riding" element={ <CaptainRiding /> } />
                 <Route path="/users/logout" element={<UserLogout />}></Route>
                 <Route path="/captains/logout" element={<CaptainLogout />} ></Route>
             </Routes>

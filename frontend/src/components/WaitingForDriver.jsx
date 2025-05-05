@@ -20,7 +20,7 @@ const WaitingForDriver = (props) => {
                     <h2 className='text-lg font-medium'>Harry Sharma</h2>
                     <h4 className='text-xl font-semibold'>WB 67 A 1234</h4>
                     <p className=' text-gray-600'>Tata nano</p>
-                    <h4 className='font-medium'><i class="ri-star-s-line"></i>3.2</h4>
+                    <h4 className='font-medium'><i className="ri-star-s-line"></i>3.2</h4>
                 </div>
             </div>
 
