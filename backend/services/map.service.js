@@ -1,39 +1,5 @@
-import axios from "axios";
-// const captainModel = require('../models/captain.model');
+import axios from 'axios';
 
-module.exports.getAddressCoordinate = async ({ address, setAddress, onLocationFound }) => {
-    const handleSearch = async () => {
-        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (data.length > 0) {
-            const location = {
-                lat: data[0].lat,
-                lon: data[0].lon,
-                display_name: data[0].display_name,
-            };
-            onLocationFound(location);
-        } else {
-            onLocationFound(null);
-        }
-    };
-
-    return (
-        <div className="p-4">
-            <input
-                type="text"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="Enter an address"
-                className="border p-2 rounded mr-2"
-            />
-            <button onClick={handleSearch} className="bg-blue-500 text-white px-4 py-2 rounded">
-                Find Location
-            </button>
-        </div>
-    );
-};
 
 
 // module.exports.getDistanceTime = async (origin, destination) => {
