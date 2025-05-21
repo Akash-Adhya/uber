@@ -2,11 +2,15 @@ import React from 'react';
 import { toast } from 'react-hot-toast'
 const ConfirmRide = (props) => {
 
-    const handle = () => {
-        toast.success("Booking successful!");
-        props.setVehicleFound(true);
-        props.setConfirmRidePanel(false);
-    }
+const handle = () => {
+    toast.success("Booking successful!");
+    // Close all panels first
+    props.setConfirmRidePanel(false);
+    props.setVehiclePanelOpen(false);
+    props.setPanelOpen(false);
+    // Then trigger the vehicle found sequence
+    props.setVehicleFound(true);
+}
 
     return (
         <div>

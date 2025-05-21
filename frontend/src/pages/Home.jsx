@@ -1,13 +1,17 @@
-import React, { useRef, useState } from 'react';
-import LocationSearchPanel from '../components/LocationSearchPanel'
-import VehiclePanel from '../components/VehiclePanel';
-import ConfirmRide from '../components/ConfirmRide';
-
+import React, { useRef, useState, useEffect } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import 'remixicon/fonts/remixicon.css';
+
+import LocationSearchPanel from '../components/LocationSearchPanel'
+import VehiclePanel from '../components/VehiclePanel';
+import ConfirmRide from '../components/ConfirmRide';
+import MapView from '../components/MapView';
 import LookingForDriver from '../components/LookingForDriver';
 import WaitingForDriver from '../components/WaitingForDriver';
+import useCurrentLocation from '../hooks/useCurrentLocation';
+import { getCoordinates } from '../utils/geocoding';
+import { getRoute } from '../utils/routing';
 
 const vehicles = [
     {
@@ -53,9 +57,19 @@ const Home = () => {
 
     const [vehicleFound, setVehicleFound] = useState(false);
     const vehicleFoundRef = useRef(null);
-    
+
     const [waitingForDriver, setWaitingForDriver] = useState(false);
     const waitingForDriverRef = useRef(null);
+
+    const [activeInput, setActiveInput] = useState(null); // "pickup" or "destination"
+    const [routeGeoJSON, setRouteGeoJSON] = useState(null);
+
+    const { position, address, isLoading } = useCurrentLocation({ setPickup });
+
+    const autofilledPickupRef = useRef('');
+
+
+
 
     const submitHandler = e => {
         e.preventDefault();
@@ -129,15 +143,65 @@ const Home = () => {
 
     useGSAP(() => {
         if (waitingForDriver) {
+            // Hide all other panels
+            gsap.to(panelRef.current, {
+                height: '0%',
+                padding: 0,
+                opacity: 0,
+                duration: 0.7,
+                immediateRender: false // Important to prevent flash
+            });
+            gsap.to(panelCloseRef.current, {
+                opacity: 0,
+                duration: 0.7,
+                immediateRender: false
+            });
+            gsap.to(vehiclePanelOpenRef.current, {
+                transform: 'translateY(100%)',
+                immediateRender: false
+            });
+            gsap.to(confirmRidePanelRef.current, {
+                transform: 'translateY(100%)',
+                immediateRender: false
+            });
+            gsap.to(vehicleFoundRef.current, {
+                transform: 'translateY(100%)',
+                immediateRender: false
+            });
+
+            // Show waiting for driver panel
             gsap.to(waitingForDriverRef.current, {
-                transform: 'translateY(0)'
-            })
+                transform: 'translateY(0)',
+                immediateRender: false
+            });
         } else {
             gsap.to(waitingForDriverRef.current, {
-                transform: 'translateY(100%)'
-            })
+                transform: 'translateY(100%)',
+                immediateRender: false
+            });
         }
     }, [waitingForDriver]);
+
+
+    useEffect(() => {
+        const fetchRoute = async () => {
+            if (pickup && destination) {
+                try {
+                    const start = await getCoordinates(pickup);
+                    const end = await getCoordinates(destination);
+
+                    const route = await getRoute(
+                        { lat: start[0], lon: start[1] },
+                        { lat: end[0], lon: end[1] }
+                    );
+                    setRouteGeoJSON(route);
+                } catch (err) {
+                    console.error("Error fetching route:", err);
+                }
+            }
+        };
+        fetchRoute();
+    }, [pickup, destination]);
 
 
     return (
@@ -152,22 +216,29 @@ const Home = () => {
             />
 
 
-            {/* Template image for development */}
-            <div
-                className="h-screen w-screen ">
+            {/* Interactive map */}
+            <div className="h-screen w-screen absolute top-0 left-0 z-0">
+                <MapView
+                    currentLocation={position ? [position.lat, position.lng] : null}
+                    pickupCoords={routeGeoJSON?.coordinates?.[0]?.reverse()}
+                    destinationCoords={routeGeoJSON?.coordinates?.[1]?.reverse()}
+                    routeGeoJSON={routeGeoJSON}
+                />
+            </div>
+            {/* <div
+                className="absolute inset-0 z-0 pointer-events-auto">
+                <MapView />
                 <img
-                    onClick={() => setVehiclePanelOpen(false)}
                     className="h-full w-full object-cover"
                     src="https://cdn.dribbble.com/users/844221/screenshots/4539927/attachments/1027442/uber-search-2.png?resize=400x300&vertical=center"
                     alt="something"
                 />
-
-            </div>
+            </div> */}
 
 
             {/* Select pickup and Destination location section */}
-            <div className=' flex flex-col justify-end h-screen absolute top-0 w-full '>
-                <div className='h-[30%] p-6 bg-white relative rounded-3xl'>
+            <div className=' flex flex-col justify-end h-screen absolute top-0 w-full pointer-events-none'>
+                <div className='h-[30%] p-6 bg-white relative rounded-3xl pointer-events-auto '>
                     <h5
                         ref={panelCloseRef}
                         onClick={() => {
@@ -183,15 +254,31 @@ const Home = () => {
                         }
                     }>
                         <input
-                            onClick={() => setPanelOpen(true)}
+                            onClick={() => {
+                                setPanelOpen(true);
+                                setActiveInput("pickup");
+
+                                if (
+                                    address &&
+                                    (pickup === '' || pickup === autofilledPickupRef.current)
+                                ) {
+                                    setPickup(address);
+                                    autofilledPickupRef.current = address;
+                                }
+                            }}
                             value={pickup}
                             onChange={(e) => setPickup(e.target.value)}
                             className="bg-[#eee] px-12 py-3 text-base rounded-lg w-full mt-5"
                             type="text"
-                            placeholder='Add a pick-up location'
+                            placeholder="Add a pick-up location"
                         />
+
+
                         <input
-                            onClick={() => setPanelOpen(true)}
+                            onClick={() => {
+                                setPanelOpen(true);
+                                setActiveInput("destination");
+                            }}
                             value={destination}
                             onChange={(e) => setDestination(e.target.value)}
                             className="bg-[#eee] px-12 py-3 text-base rounded-lg w-full mt-5"
@@ -199,30 +286,40 @@ const Home = () => {
                             placeholder='Add your destination' />
                     </form>
                 </div>
-                <div ref={panelRef} className='bg-white h-0'>
-                    <LocationSearchPanel setPanelOpen={setPanelOpen} vehiclePanelOpen={vehiclePanelOpen} setVehiclePanelOpen={setVehiclePanelOpen} />
+                <div ref={panelRef} className='bg-white h-0 pointer-events-auto'>
+                    <LocationSearchPanel
+                        setPanelOpen={setPanelOpen}
+                        vehiclePanelOpen={vehiclePanelOpen}
+                        setVehiclePanelOpen={setVehiclePanelOpen}
+                        setPickup={setPickup}
+                        setDestination={setDestination}
+                        activeInput={activeInput}
+                        pickup={pickup}
+                        destination={destination}
+                        currentLocationAddress={address} 
+                    />
                 </div>
             </div>
 
 
             {/* Ride Selection Section */}
-            <div ref={vehiclePanelOpenRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white px-3 py-10'>
+            <div ref={vehiclePanelOpenRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white px-3 py-10 pointer-events-auto'>
                 <VehiclePanel vehicles={vehicles} setConfirmRidePanel={setConfirmRidePanel} setVehiclePanelOpen={setVehiclePanelOpen} />
             </div>
 
             {/* Confirm Ride Section */}
-            <div ref={confirmRidePanelRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white px-3 py-3'>
-                <ConfirmRide setConfirmRidePanel={setConfirmRidePanel} setVehiclePanelOpen={setVehiclePanelOpen} setVehicleFound={setVehicleFound} />
+            <div ref={confirmRidePanelRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white px-3 py-3 pointer-events-auto'>
+                <ConfirmRide setConfirmRidePanel={setConfirmRidePanel} setVehiclePanelOpen={setVehiclePanelOpen} setVehicleFound={setVehicleFound} setPanelOpen={setPanelOpen} />
             </div>
 
             {/* Searching for driver Section */}
-            <div ref={vehicleFoundRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white px-3 py-3'>
-                <LookingForDriver setVehicleFound={setVehicleFound} />
+            <div ref={vehicleFoundRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white px-3 py-3 pointer-events-auto'>
+                <LookingForDriver vehicleFound={vehicleFound} setVehicleFound={setVehicleFound} setWaitingForDriver={setWaitingForDriver} />
             </div>
 
 
             {/* Waiting for the driver to come to the pickup spot */}
-            <div ref={waitingForDriverRef} className='fixed w-full z-10 translate-y-full bottom-0 bg-white px-3 py-3'>
+            <div ref={waitingForDriverRef} className='h-[70%] fixed w-full z-10 translate-y-full bottom-0 bg-white px-3 py-3 pointer-events-auto'>
                 <WaitingForDriver setWaitingForDriver={setWaitingForDriver} />
             </div>
 

@@ -1,6 +1,21 @@
 import React from 'react';
+import { useEffect } from 'react';
 
 const LookingForDriver = (props) => {
+
+useEffect(() => {
+    if (props.vehicleFound) {
+        const timer = setTimeout(() => {  
+            // Close all panels including this one
+            props.setVehicleFound(false);
+            // Only show waiting for driver
+            props.setWaitingForDriver(true);
+        }, 3000);
+
+        return () => clearTimeout(timer);
+    }
+}, [props.vehicleFound, props.setVehicleFound, props.setWaitingForDriver]);
+
     return (
         <div>
             <h5 className="p-1 text-center w-[93%] absolute top-0"

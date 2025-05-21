@@ -26,9 +26,10 @@ const App = () => {
                 <Route path="/captains/signup" element={<CaptainSignup />} />
                 <Route path="/captains/login" element={<CaptainLogin />} />
                 <Route path="/home" element={
-                    <UserProtectWrapper>
-                        <Home />
-                    </UserProtectWrapper>}
+                    // <UserProtectWrapper>
+                    // </UserProtectWrapper>
+                    <Home />
+                }
                 />
                 <Route path="/riding" element={<Riding />}></Route>
                 <Route path="/captain/home" element={
@@ -36,7 +37,7 @@ const App = () => {
                         <CaptainHome />
                     </CaptainProtectWrapper>}
                 />
-                <Route path="/captain/riding" element={ <CaptainRiding /> } />
+                <Route path="/captain/riding" element={<CaptainRiding />} />
                 <Route path="/users/logout" element={<UserLogout />}></Route>
                 <Route path="/captains/logout" element={<CaptainLogout />} ></Route>
             </Routes>
