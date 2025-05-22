@@ -1,9 +1,26 @@
-// Service functions for map/location-related logic (distance, suggestions, etc).
+const axios = require('axios');
+const captainModel = require('../models/captain.model');
 
-import axios from 'axios';
+module.exports.getAddressCoordinate = async (address) => {
+    const apiKey = process.env.GOOGLE_MAPS_API;
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
 
-// This file contains map-related service functions such as distance calculation, autocomplete, and finding captains in a radius.
-// All functions are currently commented out and serve as placeholders for future implementation.
+    try {
+        const response = await axios.get(url);
+        if (response.data.status === 'OK') {
+            const location = response.data.results[ 0 ].geometry.location;
+            return {
+                ltd: location.lat,
+                lng: location.lng
+            };
+        } else {
+            throw new Error('Unable to fetch coordinates');
+        }
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
 
 module.exports.getDistanceTime = async (origin, destination) => {
     if (!origin || !destination) {
@@ -56,18 +73,17 @@ module.exports.getAutoCompleteSuggestions = async (input) => {
     }
 }
 
-// module.exports.getCaptainsInTheRadius = async (ltd, lng, radius) => {
+module.exports.getCaptainsInTheRadius = async (ltd, lng, radius) => {
 
-//     // radius in km
-//     const captains = await captainModel.find({
-//         location: {
-//             $geoWithin: {
-//                 $centerSphere: [ [ ltd, lng ], radius / 6371 ]
-//             }
-//         }
-//     });
+    const captains = await captainModel.find({
+        location: {
+            $geoWithin: {
+                $centerSphere: [ [ ltd, lng ], radius / 6371 ]
+            }
+        }
+    });
 
-//     return captains;
+    return captains;
 
 
-// }
+}

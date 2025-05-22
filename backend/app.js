@@ -24,6 +24,7 @@ const connectToDB = require('./db/db'); // MongoDB connection function
 const userRoutes = require('./routes/user.routes'); // User routes
 const captainRoutes = require('./routes/captain.routes'); // Captain routes
 const mapRoutes = require('./routes/map.routes'); // Map/location routes
+const rideRoutes = require('./routes/ride.routes'); // Ride routes
 
 // Load environment variables
 dotenv.config();
@@ -48,5 +49,6 @@ app.get('/', (req, res) => {
 app.use('/users', userRoutes);
 app.use('/captains', captainRoutes);
 app.use('/maps', mapRoutes);
+app.use('/rides', rideRoutes);
 
 module.exports = app;
