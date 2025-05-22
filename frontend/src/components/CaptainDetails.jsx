@@ -1,4 +1,4 @@
-
+// Component for displaying captain's profile and statistics.
 import React, { useContext } from 'react';
 import { captainDataContext } from '../context/CaptainContext'
 

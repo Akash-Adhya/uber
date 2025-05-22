@@ -1,3 +1,4 @@
+// Component for selecting a vehicle type and proceeding to ride confirmation.
 import React, { useState } from 'react';
 
 const VehiclePanel = (props) => {
@@ -7,6 +8,7 @@ const VehiclePanel = (props) => {
         <div>
             <h5 className="p-1 text-center w-[93%] absolute top-0"
                 onClick={() => {
+                    // Close vehicle panel and reset selection
                     props.setVehiclePanelOpen(false);
                     setSelectedVehicle(null);
                 }}>
@@ -18,6 +20,7 @@ const VehiclePanel = (props) => {
                 <div
                     key={vehicle.id}
                     onClick={() => {
+                        // Set selected vehicle and open confirm ride panel
                         setSelectedVehicle(vehicle.id);
                         props.setConfirmRidePanel(true);
                         props.setVehiclePanelOpen(false);
@@ -25,6 +28,7 @@ const VehiclePanel = (props) => {
                     className={`flex border-2 mb-2 rounded-xl w-full p-3 items-center justify-between cursor-pointer transition-all duration-200 
                         ${selectedVehicle === vehicle.id ? 'border-black' : 'border-gray-100'}`}
                 >
+                    {/* Vehicle info */}
                     <img className="h-10" src={vehicle.img} alt="" />
                     <div className="ml-2 w-1/2">
                         <h5 className="text-base font-medium">{vehicle.name} <span className="ri-user-3-fill"></span></h5>

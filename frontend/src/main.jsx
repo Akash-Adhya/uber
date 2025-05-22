@@ -1,3 +1,4 @@
+// Main entry point for the React frontend application. Sets up context providers and routing.
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'

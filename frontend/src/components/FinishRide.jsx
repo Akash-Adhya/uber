@@ -1,3 +1,4 @@
+// Component for finishing a ride and showing ride summary to the captain.
 import React from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -10,7 +11,9 @@ const FinishRide = (props) => {
     const navigate = useNavigate()
 
     async function endRide() {
+        // Show ride complete toast (API call commented out)
         toast.success("Ride Complete!");
+        // Example: send ride end request to backend and navigate
         // const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/end-ride`, {
 
         //     rideId: props.ride._id
@@ -31,6 +34,7 @@ const FinishRide = (props) => {
     return (
         <div>
             <h5 className='p-1 text-center w-[93%] absolute top-0' onClick={() => {
+                // Close finish ride panel
                 props.setFinishRidePanel(false)
             }}><i className="text-3xl text-gray-200 ri-arrow-down-wide-line"></i></h5>
             <h3 className='text-2xl font-semibold mb-5'>Finish this Ride</h3>

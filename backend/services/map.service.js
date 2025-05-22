@@ -1,6 +1,9 @@
+// Service functions for map/location-related logic (distance, suggestions, etc).
+
 import axios from 'axios';
 
-
+// This file contains map-related service functions such as distance calculation, autocomplete, and finding captains in a radius.
+// All functions are currently commented out and serve as placeholders for future implementation.
 
 // module.exports.getDistanceTime = async (origin, destination) => {
 //     if (!origin || !destination) {

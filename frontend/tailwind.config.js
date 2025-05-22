@@ -1,3 +1,4 @@
+// Tailwind CSS configuration for the frontend project.
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [

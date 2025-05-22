@@ -1,3 +1,5 @@
+// Mongoose model for storing blacklisted JWT tokens (for logout/invalidation).
+
 const mongoose = require('mongoose');
 
 

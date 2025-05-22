@@ -3,6 +3,7 @@ import { toast } from 'react-hot-toast'
 const ConfirmRide = (props) => {
 
 const handle = () => {
+    // Show booking success toast and transition panels
     toast.success("Booking successful!");
     // Close all panels first
     props.setConfirmRidePanel(false);
@@ -16,6 +17,7 @@ const handle = () => {
         <div>
             <h5 className="p-1 text-center w-[93%] absolute top-0"
                 onClick={() => {
+                    // Go back to vehicle selection
                     props.setConfirmRidePanel(false);
                     props.setVehiclePanelOpen(true);
                 }}>

@@ -1,3 +1,4 @@
+// Main Home page for the Uber clone frontend. Handles map, ride selection, and UI panels.
 import React, { useRef, useState, useEffect } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
@@ -70,13 +71,13 @@ const Home = () => {
 
 
 
-
     const submitHandler = e => {
         e.preventDefault();
 
     }
 
 
+    // Animate panel open/close transitions
     useGSAP(() => {
         if (panelOpen) {
             gsap.to(panelRef.current, {
@@ -103,6 +104,7 @@ const Home = () => {
         }
     }, [panelOpen]);
 
+    // Animate vehicle panel transitions
     useGSAP(() => {
         if (vehiclePanelOpen) {
             gsap.to(vehiclePanelOpenRef.current, {
@@ -115,6 +117,7 @@ const Home = () => {
         }
     }, [vehiclePanelOpen]);
 
+    // Animate confirm ride panel transitions
     useGSAP(() => {
         if (confirmRidePanel) {
             gsap.to(confirmRidePanelRef.current, {
@@ -127,7 +130,7 @@ const Home = () => {
         }
     }, [confirmRidePanel]);
 
-
+    // Animate vehicle found panel transitions
     useGSAP(() => {
         if (vehicleFound) {
             gsap.to(vehicleFoundRef.current, {
@@ -140,7 +143,7 @@ const Home = () => {
         }
     }, [vehicleFound]);
 
-
+    // Animate waiting for driver panel and hide others
     useGSAP(() => {
         if (waitingForDriver) {
             // Hide all other panels
@@ -183,13 +186,16 @@ const Home = () => {
     }, [waitingForDriver]);
 
 
+    // Fetch route when pickup and destination are set
     useEffect(() => {
         const fetchRoute = async () => {
             if (pickup && destination) {
                 try {
+                    // Get coordinates for pickup and destination
                     const start = await getCoordinates(pickup);
                     const end = await getCoordinates(destination);
 
+                    // Fetch route GeoJSON between points
                     const route = await getRoute(
                         { lat: start[0], lon: start[1] },
                         { lat: end[0], lon: end[1] }

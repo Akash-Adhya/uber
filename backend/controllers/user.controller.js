@@ -1,3 +1,5 @@
+// Controller for user authentication, registration, profile, and logout endpoints.
+
 const userModel = require('../models/user.model')
 const userService = require('../services/user.service')
 const { validationResult } = require('express-validator');

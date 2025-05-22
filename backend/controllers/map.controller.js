@@ -1,7 +1,12 @@
-const mapService = require('../services/map.service');
-const { validationResult } = require('express-validator');
+// Controller for map/location-related endpoints (coordinates, distance, suggestions).
 
+const mapService = require('../services/map.service'); // Service for map-related logic
+const { validationResult } = require('express-validator'); // For request validation
 
+/**
+ * Gets coordinates for a given address using the map service.
+ * Validates input and returns coordinates or error.
+ */
 module.exports.getCoordinates = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -12,6 +17,7 @@ module.exports.getCoordinates = async (req, res, next) => {
     const { address } = req.query;
 
     try {
+        // Call service to get coordinates for the address
         const coordinates = await mapService.getAddressCoordinate(address);
         res.status(200).json(coordinates);
         

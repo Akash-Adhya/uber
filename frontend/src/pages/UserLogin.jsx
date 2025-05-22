@@ -17,14 +17,17 @@ const UserLogin = () => {
     const submitHandler = async (e) => {
         e.preventDefault();
 
+        // Prepare user login data
         const userData = {
             email: email,
             password: password
         };
 
-        const response = await axios.post(`${import.meta.env.VITE_NGROK_URL}/users/login`, userData);
+        // Send login request to backend
+        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/login`, userData);
 
         if (response.status === 200) {
+            // On success, update user context and localStorage, then navigate
             const data = response.data;
             setUser(data.user);
             localStorage.setItem('token', data.token);

@@ -1,3 +1,4 @@
+// Signup page for captains to register their vehicle and personal details.
 import React, { useState } from "react";
 import { useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
