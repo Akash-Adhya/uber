@@ -1,0 +1,27 @@
+name: Auto Commit
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Every 1 hour
+  workflow_dispatch:
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Update something.txt
+        run: |
+          RANDOM_WORDS=$(curl -s https://random-word-api.herokuapp.com/word?number=10 | jq -r '.[]' | paste -sd " " -)
+          echo "$RANDOM_WORDS" > something.txt
+
+      - name: Commit and push
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add something.txt
+          git commit -m "Functional changes" || echo "No changes to commit"
+          git push
