@@ -13,6 +13,7 @@ import WaitingForDriver from '../components/WaitingForDriver';
 import useCurrentLocation from '../hooks/useCurrentLocation';
 import { getCoordinates } from '../utils/geocoding';
 import { getRoute } from '../utils/routing';
+import SocketContext from '../context/SocketContext';
 
 const vehicles = [
     {
@@ -68,6 +69,8 @@ const Home = () => {
     const { position, address, isLoading } = useCurrentLocation({ setPickup });
 
     const autofilledPickupRef = useRef('');
+
+    const [fare, setFare] = useState(null);
 
 
     const handleDestinationChange = async (e) => {
@@ -352,7 +355,7 @@ const Home = () => {
 
             {/* Ride Selection Section */}
             <div ref={vehiclePanelOpenRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white px-3 py-10 pointer-events-auto'>
-                <VehiclePanel vehicles={vehicles} setConfirmRidePanel={setConfirmRidePanel} setVehiclePanelOpen={setVehiclePanelOpen} />
+                <VehiclePanel createRide={createRide} fare={fare} vehicles={vehicles} setConfirmRidePanel={setConfirmRidePanel} setVehiclePanelOpen={setVehiclePanelOpen} />
             </div>
 
             {/* Confirm Ride Section */}

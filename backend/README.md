@@ -1,25 +1,32 @@
 # UBER Backend API Documentation
 
+This document provides a comprehensive overview of the UBER Backend API, including endpoints for user and captain management, ride operations, and map functionalities. It also outlines the validation rules for request parameters and provides examples for each endpoint.
+
 ---
 
 ## 📚 Table of Contents
 
+- [Tech Stack ](#tech-stack)
 - [User Endpoints](#user-endpoints)
-  - [Register User](#register-user)
-  - [Login User](#login-user)
-  - [User Profile](#user-profile)
-  - [Logout User](#logout-user)
 - [Captain Endpoints](#captain-endpoints)
-  - [Register Captain](#register-captain)
-  - [Login Captain](#login-captain)
-  - [Captain Profile](#captain-profile)
-  - [Logout Captain](#logout-captain)
+- [Map Endpoints](#map-endpoints)
+- [Ride Endpoints](#ride-endpoints)
 - [Validation Rules](#validation-rules)
 - [Notes](#notes)
 
 ---
 
-## 👤 User Endpoints
+## Tech Stack
+
+- **Node.js** with **Express**
+- **MongoDB** with Mongoose
+- **JWT** for Authentication
+- **bcryptjs** for Password Hashing
+- **dotenv** for Environment Configuration
+
+---
+
+##  User Endpoints 
 
 ### Register User
 
@@ -426,6 +433,335 @@ HTTP/1.1 200 OK
 HTTP/1.1 401 Unauthorized
 {
   "message": "Unauthorized access !"
+}
+```
+
+---
+
+## 🗺️ Map Endpoints
+
+### Get Coordinates
+
+**Endpoint:**  
+`GET /maps/get-coordinates`
+
+Fetches coordinates for a given address.  
+
+#### Query Parameters
+
+| Parameter | Type   | Required | Description                     |
+|-----------|--------|----------|---------------------------------|
+| `address` | String | Yes      | Address to fetch coordinates for |
+
+**Example Request:**
+```http
+GET /maps/get-coordinates?address=1600 Amphitheatre Parkway, Mountain View, CA
+```
+
+**Example Success Response:**
+```json
+HTTP/1.1 200 OK
+{
+  "latitude": 37.4220656,
+  "longitude": -122.0840897
+}
+```
+
+**Example Error Response:**
+```json
+HTTP/1.1 400 Bad Request
+{
+  "message": "Address is required"
+}
+```
+
+---
+
+### Get Distance and Time
+
+**Endpoint:**  
+`GET /maps/get-distance-time`
+
+Fetches distance and time between two locations.  
+
+#### Query Parameters
+
+| Parameter    | Type   | Required | Description                |
+|--------------|--------|----------|----------------------------|
+| `origin`     | String | Yes      | Starting location          |
+| `destination`| String | Yes      | Destination location       |
+
+**Example Request:**
+```http
+GET /maps/get-distance-time?origin=San Francisco, CA&destination=Los Angeles, CA
+```
+
+**Example Success Response:**
+```json
+HTTP/1.1 200 OK
+{
+  "distance": "383 miles",
+  "duration": "5 hours 30 minutes"
+}
+```
+
+**Example Error Response:**
+```json
+HTTP/1.1 400 Bad Request
+{
+  "message": "Origin and destination are required"
+}
+```
+
+---
+
+### Get Suggestions
+
+**Endpoint:**  
+`GET /maps/get-suggestions`
+
+Fetches autocomplete suggestions for a given input.  
+
+#### Query Parameters
+
+| Parameter | Type   | Required | Description                     |
+|-----------|--------|----------|---------------------------------|
+| `input`   | String | Yes      | Input text for suggestions      |
+
+**Example Request:**
+```http
+GET /maps/get-suggestions?input=1600 Amphitheatre Parkway
+```
+
+**Example Success Response:**
+```json
+HTTP/1.1 200 OK
+{
+  "suggestions": [
+    "1600 Amphitheatre Parkway, Mountain View, CA",
+    "1600 Amphitheatre Parkway, Mountain View, CA 94043, USA"
+  ]
+}
+```
+
+**Example Error Response:**
+```json
+HTTP/1.1 400 Bad Request
+{
+  "message": "Input is required"
+}
+```
+
+---
+
+## 🚕 Ride Endpoints
+
+### Create Ride
+
+**Endpoint:**  
+`POST /rides/create`
+
+Creates a new ride request.  
+
+#### Body Parameters
+
+| Parameter    | Type   | Required | Description                |
+|--------------|--------|----------|----------------------------|
+| `pickup`     | String | Yes      | Pickup location            |
+| `destination`| String | Yes      | Destination location       |
+| `vehicleType`| String | Yes      | Type of vehicle (`auto`, `car`, `moto`) |
+
+**Example Request:**
+```json
+POST /rides/create
+Content-Type: application/json
+
+{
+  "pickup": "1600 Amphitheatre Parkway, Mountain View, CA",
+  "destination": "1 Infinite Loop, Cupertino, CA",
+  "vehicleType": "car"
+}
+```
+
+**Example Success Response:**
+```json
+HTTP/1.1 201 Created
+{
+  "rideId": "ride_id",
+  "status": "pending",
+  "driver": null
+}
+```
+
+**Example Error Response:**
+```json
+HTTP/1.1 400 Bad Request
+{
+  "message": "Invalid vehicle type"
+}
+```
+
+---
+
+### Get Fare
+
+**Endpoint:**  
+`GET /rides/get-fare`
+
+Fetches the estimated fare for a ride.  
+
+#### Query Parameters
+
+| Parameter    | Type   | Required | Description                |
+|--------------|--------|----------|----------------------------|
+| `pickup`     | String | Yes      | Pickup location            |
+| `destination`| String | Yes      | Destination location       |
+
+**Example Request:**
+```http
+GET /rides/get-fare?pickup=1600 Amphitheatre Parkway, Mountain View, CA&destination=1 Infinite Loop, Cupertino, CA
+```
+
+**Example Success Response:**
+```json
+HTTP/1.1 200 OK
+{
+  "fare": 25.50,
+  "currency": "USD"
+}
+```
+
+**Example Error Response:**
+```json
+HTTP/1.1 400 Bad Request
+{
+  "message": "Pickup and destination are required"
+}
+```
+
+---
+
+### Confirm Ride
+
+**Endpoint:**  
+`POST /rides/confirm`
+
+Confirms a ride by the captain.  
+
+#### Body Parameters
+
+| Parameter    | Type   | Required | Description                |
+|--------------|--------|----------|----------------------------|
+| `rideId`     | String | Yes      | ID of the ride to confirm  |
+
+**Example Request:**
+```json
+POST /rides/confirm
+Content-Type: application/json
+
+{
+  "rideId": "ride_id"
+}
+```
+
+**Example Success Response:**
+```json
+HTTP/1.1 200 OK
+{
+  "message": "Ride confirmed",
+  "rideId": "ride_id",
+  "status": "confirmed"
+}
+```
+
+**Example Error Response:**
+```json
+HTTP/1.1 400 Bad Request
+{
+  "message": "Invalid ride ID"
+}
+```
+
+---
+
+### Start Ride
+
+**Endpoint:**  
+`GET /rides/start-ride`
+
+Starts a ride after OTP verification.  
+
+#### Query Parameters
+
+| Parameter    | Type   | Required | Description                |
+|--------------|--------|----------|----------------------------|
+| `rideId`     | String | Yes      | ID of the ride to start    |
+| `otp`        | String | Yes      | OTP for verification       |
+
+**Example Request:**
+```http
+GET /rides/start-ride?rideId=ride_id&otp=123456
+```
+
+**Example Success Response:**
+```json
+HTTP/1.1 200 OK
+{
+  "message": "Ride started",
+  "rideId": "ride_id",
+  "status": "in_progress"
+}
+```
+
+**Example Error Response:**
+```json
+HTTP/1.1 400 Bad Request
+{
+  "message": "Invalid OTP"
+}
+```
+
+---
+
+### End Ride
+
+**Endpoint:**  
+`POST /rides/end-ride`
+
+Ends an ongoing ride.  
+
+#### Body Parameters
+
+| Parameter    | Type   | Required | Description                |
+|--------------|--------|----------|----------------------------|
+| `rideId`     | String | Yes      | ID of the ride to end      |
+
+**Example Request:**
+```json
+POST /rides/end-ride
+Content-Type: application/json
+
+{
+  "rideId": "ride_id"
+}
+```
+
+**Example Success Response:**
+```json
+HTTP/1.1 200 OK
+{
+  "message": "Ride ended",
+  "rideId": "ride_id",
+  "status": "completed",
+  "fare": 25.50
+}
+```
+
+**Example Error Response:**
+```json
+HTTP/1.1 400 Bad Request
+{
+  "message": "Invalid ride ID"
 }
 ```
 
