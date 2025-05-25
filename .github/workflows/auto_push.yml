@@ -2,7 +2,7 @@ name: Auto Commit
 
 on:
   schedule:
-    - cron: '*/30 * * * *'  # Every 30 minutes
+    - cron: '*/30 * * * *'
   workflow_dispatch:
 
 jobs:
@@ -18,11 +18,14 @@ jobs:
           RANDOM_WORDS=$(curl -s https://random-word-api.herokuapp.com/word?number=10 | jq -r '.[]' | paste -sd " " -)
           echo "$RANDOM_WORDS" > something.txt
 
-      - name: Commit and push if changed
+      - name: Configure Git
         run: |
           git config --global user.name "akash-adhya"
           git config --global user.email "akashadhya19@gmail.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
 
+      - name: Commit and push if changed
+        run: |
           if [ -n "$(git status --porcelain)" ]; then
             git add something.txt
             git commit -m "Functional changes"
