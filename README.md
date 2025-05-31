@@ -153,4 +153,4 @@ For more details, refer to the [backend README](./backend/README.md).
 This project is licensed under the MIT License. See the LICENSE file for details.
 
 ## Contact
-For any inquiries or feedback, please contact [Akash Adhya](mailto:akashadhya@gmail.com).
+For any inquiries or feedback or suggestions, please contact [Akash Adhya](mailto:akashadhya@gmail.com).
