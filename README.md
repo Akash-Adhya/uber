@@ -1,6 +1,6 @@
-# Uber Clone
+# An Open-Source UBER Clone with *Leaflet* & *OpenStreetMap* Integration
 
-This is a full-stack Uber Clone project that replicates the core functionalities of the Uber platform. It includes a **frontend** built with React and a **backend** powered by Node.js and Express.
+This project is a full-stack ride-hailing app inspired by Uber, built with modern web technologies. A key distinction is the use of open-source mapping tools — OpenStreetMap and Leaflet — instead of Google Maps, making it free, flexible, and community-powered.
 
 ---
 
@@ -20,9 +20,10 @@ This is a full-stack Uber Clone project that replicates the core functionalities
 
 ## Tech Stack
 
-- **Frontend**: React, Vite, Tailwind CSS, React Router, React Icons
-- **Backend**: Node.js, Express, MongoDB, JWT, bcrypt
-- **Other Tools**: ESLint, Prettier, dotenv
+- **Frontend**: React, Vite, Tailwind CSS, React Router, React Icons etc.
+- **Backend**: Node.js, Express, MongoDB, JWT, bcrypt etc.
+- **Mapping**: OpenStreetMap, Leaflet
+- **Other Tools**: ESLint, Prettier, dotenv etc.
 
 ---
 
@@ -114,6 +115,14 @@ uberclone/
 - Secure authentication with JWT
 - Integration with map services for location and distance calculations
 
+### Open-Source Mapping with OpenStreetMap and Leaflet
+Unlike many applications that rely on proprietary mapping services like Google Maps, this project utilizes OpenStreetMap in conjunction with Leaflet to provide interactive map functionalities. This approach offers several advantages:
+
+- Cost-Effective: Eliminates the need for paid mapping APIs.
+- Customizable: Greater control over map appearance and behavior.
+- Community-Driven: Benefit from continuous updates and contributions from the global OpenStreetMap community.
+- Moneycontrol: By leveraging these open-source tools, the application ensures scalability and flexibility without incurring additional costs.
+
 ---
 
 ## Frontend Details
@@ -153,4 +162,4 @@ For more details, refer to the [backend README](./backend/README.md).
 This project is licensed under the MIT License. See the LICENSE file for details.
 
 ## Contact
-For any inquiries or feedback or suggestions, please contact [Akash Adhya](mailto:akashadhya@gmail.com).
+For any inquiries or feedback, please contact [Akash Adhya](mailto:akashadhya@gmail.com).
